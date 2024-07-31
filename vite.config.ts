@@ -7,7 +7,7 @@ import path from "path"
 export default defineConfig({
   plugins: [react()],
   build:{
-    outDir:'doc'
+    outDir:'docs'
   },
    resolve: {
     alias: {
