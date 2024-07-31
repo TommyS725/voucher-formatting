@@ -9,7 +9,9 @@ lerna-debug.log*
 bun.lockb
 
 node_modules
-dist
+#for  deployment
+# dist
+
 dist-ssr
 *.local
 
