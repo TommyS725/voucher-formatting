@@ -16,16 +16,16 @@ function Output({ data,action}: Props) {
 
     return (
         <div className="space-y-10">
-            <div className=" flex flex-wrap gap-8">
+            <div className=" flex flex-wrap gap-8 justify-between">
 
-            <pre className="text-2xl font-semibold">Output   {data.tester ? "(CLick to copy)" : undefined} </pre>
+            <pre className="text-2xl font-semibold">Output</pre>
             {data.tester &&
-            <>
+            <div className=" space-x-10">
 
             <Button onClick={action.createVoucherData}>Confirm voucher data</Button>
             <Button variant={'secondary'} onClick={action.copyHeaders}>Copy Table Headers</Button>
 
-            </>
+            </div>
 
             }
             </div>

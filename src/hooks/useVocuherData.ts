@@ -43,7 +43,7 @@ function useVoucherData() {
         function descriptionForLang(lang:Language){
             const sentences = [
                 `${Dict.tester[lang]}: ${tester}        ${Dict['testId'][lang]}: ${testId}`,
-                `${Dict['channel'][lang]}:${channelDict[channel][lang]}`,
+                `${Dict['channel'][lang]}: ${channelDict[channel][lang]}`,
                 `${Dict['voucherType'][lang]}: ${voucherTypeDict[resolveVoucherType][lang]}`,
                 havePrice?`${Dict['tokenPrice'][lang]}: ${tokenPrice}` : '',
                 `${Dict['offerType'][lang]}: ${offerTypeDict[offerType][lang]}`,
@@ -148,7 +148,7 @@ function useVoucherData() {
         const wait = 500
         const fn = async () => {
             if (idx === to_copy.length) {
-                setTestId(testId+1)
+                // setTestId(testId+1)
                 return
             }
             const { label, value } = to_copy[idx]
