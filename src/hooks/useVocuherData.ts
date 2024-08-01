@@ -96,13 +96,14 @@ function useVoucherData() {
             'value':[header,value].join('\n')
         }
 
-        const to_copy = [table,
+        const to_copy = [
             {
                 label:'English description',value:description
             },
             {
                 label:'Chinese description',value:tc_description
             },
+            table,
         ] satisfies {
             label: string
             value: string
