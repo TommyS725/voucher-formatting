@@ -5,7 +5,7 @@ import { useToast } from "./ui/use-toast"
 
 type Props = {
     text: string
-    title: string
+    title?: string
 
 }
 
@@ -22,7 +22,7 @@ function CopyField(props: Props) {
 
     return (
         <div>
-            <h1 className="text-xl font-semibold">{title}</h1>
+            {title && <h1 className="text-xl font-semibold">{title}</h1>}
             <pre onClick={copyToClipboard} className="mt-4  hover:opacity-50 cursor-pointer "  >
                 {text}
             </pre>

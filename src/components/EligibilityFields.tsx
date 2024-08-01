@@ -1,30 +1,17 @@
-import { Weekday, Weekdays } from "@/types"
+import { Weekdays } from "@/types"
 import { Switch } from "./ui/switch"
 import { Input } from "./ui/input"
 import { Checkbox } from "./ui/checkbox"
 import TextInput from "./TextInput"
+import useVoucherData from "@/hooks/useVocuherData"
 
 
 type Props = {
-    data: {
-        minspendOn: boolean
-        weekdayOn: boolean
-        timeOn: boolean
-        minspend: number
-        weekdays: Weekday[]
-        startTime: string
-        endTime: string
-    },
+    data: ReturnType<typeof useVoucherData>[0]
 
-    update: {
-        setMinspendOn: (value: boolean) => void
-        setWeekdayOn: (value: boolean) => void
-        setTimeOn: (value: boolean) => void
-        setMinspend: (value: number) => void
-        setWeekdays: (value: Weekday[]) => void
-        setStartTime: (value: string) => void
-        setEndTime: (value: string) => void
-    }
+    update:  ReturnType<typeof useVoucherData>[1]
+
+
 }
 
 
