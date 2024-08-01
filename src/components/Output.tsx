@@ -20,7 +20,12 @@ function Output({ data,action}: Props) {
 
             <pre className="text-2xl font-semibold">Output   {data.tester ? "(CLick to copy)" : undefined} </pre>
             {data.tester &&
-                <Button onClick={action.createVoucherData}>Confirm voucher data</Button>
+            <>
+
+            <Button onClick={action.createVoucherData}>Confirm voucher data</Button>
+            <Button variant={'secondary'} onClick={action.copyHeaders}>Copy Table Headers</Button>
+
+            </>
 
             }
             </div>

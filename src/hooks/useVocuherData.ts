@@ -47,10 +47,10 @@ function useVoucherData() {
                 `${Dict['voucherType'][lang]}: ${voucherTypeDict[resolveVoucherType][lang]}`,
                 havePrice?`${Dict['tokenPrice'][lang]}: ${tokenPrice}` : '',
                 `${Dict['offerType'][lang]}: ${offerTypeDict[offerType][lang]}`,
-                offerType === 'Discount voucher' ? `${Dict['discount']}: $${discount}\n` : "",
+                offerType === 'Discount voucher' ? `${Dict['discount'][lang]}: $${discount}\n` : "",
                 `${Dict['offerPeriod'][lang]}: ${dateStringFormat(startDate)} ${Dict['to'][lang]} ${dateStringFormat(endDate)}`,
                 `${Dict['Quota'][lang]}: ${isUnlimitQuota?Dict['unlimited'][lang]:quota}`,
-                `\n${Dict['eligibility'][lang]}:${haveEligibility?"":Dict['none'][lang]}`,
+                `\n${Dict['eligibility'][lang]}: ${haveEligibility?"":Dict['none'][lang]}`,
                 minspendOn?`${Dict['minspend'][lang]}: ${minspend}`:'',
                 weekdayOn?`${Dict['weekdays'][lang]}: ${!weekdays.length? weekdayDict['none'][lang]:
                     weekdays.length === 7 ? weekdayDict['Everyday'][lang]:
@@ -94,7 +94,7 @@ function useVoucherData() {
         quota: isUnlimitQuota ? null : quota,
         is_unlimited_quota: isUnlimitQuota,
         time_on: timeOn,
-        start_time: timeOn ? startTime : "00::00",
+        start_time: timeOn ? startTime : "00:00",
         end_time: timeOn ? endTime : "23:59",
         min_spend_on: minspendOn,
         min_spend: minspendOn ? minspend : null,
@@ -112,16 +112,24 @@ function useVoucherData() {
 
     function tableValue(head: DATA_HEADING) {
         const value = tabe_data[head]
+        if(value === null)  return 'NULL'
         if (typeof value === 'boolean') return value ? 1 : 0
         return value
     }
 
-    const createVoucherData = async () => {
+    const copyHeaders = async ()=>{
         const header = DATA_HEADINGS.map(h => h).join('\t')
+        await navigator.clipboard.writeText(header)
+        toast({
+            title: `Copied table headers to clipboard`,
+        })
+    }
+
+    const createVoucherData = async () => {
         const value = DATA_HEADINGS.map(h => tableValue(h)).join('\t')
         const table = {
-            'label': 'Table except descriptions',
-            'value': [header, value].join('\n')
+            'label': 'Table value except descriptions',
+            'value': value
         }
 
         const to_copy = [
@@ -140,6 +148,7 @@ function useVoucherData() {
         const wait = 500
         const fn = async () => {
             if (idx === to_copy.length) {
+                setTestId(testId+1)
                 return
             }
             const { label, value } = to_copy[idx]
@@ -208,7 +217,8 @@ function useVoucherData() {
         setWeekdays,
         setStartTime,
         setEndTime,
-        createVoucherData
+        createVoucherData,
+        copyHeaders
     }
 
     return [data, action] as const
