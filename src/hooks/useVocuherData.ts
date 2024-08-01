@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { Channel, ChannelToSymbol, DATA_HEADING, DATA_HEADINGS, DATA_TABLE, OfferType, OfferTypeToSymbol, VoucherType, Weekday } from "../types";
 import useLocalStorage from "./useLocalStorage";
-import {  dateStringFormat, weekdayShort } from "@/lib/utils";
+import { dateStringFormat, weekdayShort } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
+import { channelDict, Dict, Language, offerTypeDict, pair, voucherTypeDict, weekdayDict } from "@/lib/languages";
 
 
 function useVoucherData() {
@@ -36,6 +37,34 @@ function useVoucherData() {
     const isForceLimitedQuota = channel === 'Brand voucher' && voucherType === 'Free Reemption'
     const isUnlimitQuota = isForceLimitedQuota ? false : isForceUnlimitQuota ? true : unlimitQuota
     const resolveVoucherType: VoucherType = channel === 'Airdrop' ? 'Free Reemption' : channel === 'The Club' ? 'Token Reemption' : voucherType
+    const haveEligibility = minspendOn || weekdayOn || timeOn
+
+    function createDiscriptions(){
+        function descriptionForLang(lang:Language){
+            const sentences = [
+                `${Dict.tester[lang]}: ${tester}        ${Dict['testId'][lang]}: ${testId}`,
+                `${Dict['channel'][lang]}:${channelDict[channel][lang]}`,
+                `${Dict['voucherType'][lang]}: ${voucherTypeDict[resolveVoucherType][lang]}`,
+                havePrice?`${Dict['tokenPrice'][lang]}: ${tokenPrice}` : '',
+                `${Dict['offerType'][lang]}: ${offerTypeDict[offerType][lang]}`,
+                offerType === 'Discount voucher' ? `${Dict['discount']}: $${discount}\n` : "",
+                `${Dict['offerPeriod'][lang]}: ${dateStringFormat(startDate)} ${Dict['to'][lang]} ${dateStringFormat(endDate)}`,
+                `${Dict['Quota'][lang]}: ${isUnlimitQuota?Dict['unlimited'][lang]:quota}`,
+                `\n${Dict['eligibility'][lang]}:${haveEligibility?"":Dict['none'][lang]}`,
+                minspendOn?`${Dict['minspend'][lang]}: ${minspend}`:'',
+                weekdayOn?`${Dict['weekdays'][lang]}: ${!weekdays.length? weekdayDict['none'][lang]:
+                    weekdays.length === 7 ? weekdayDict['Everyday'][lang]:
+                    weekdays.map(d=>weekdayDict[d][lang]).join(', ')
+                 }`:"",
+                 timeOn?`${Dict['time'][lang]}:  ${startTime} ${Dict['to'][lang]} ${endTime}`:''
+            ].filter(s=>s!=='') satisfies string[]
+    
+            return sentences.join('\n')
+        }
+        
+        return pair(descriptionForLang('en'),descriptionForLang('tc'))
+    }
+    
 
     const weekdayTitle =
         !weekdayOn || weekdays.length == 7 ? "Everyday" :
@@ -49,26 +78,16 @@ function useVoucherData() {
         + `_${isUnlimitQuota ? "Un" : "q" + quota}`
 
 
-    const description = `Tester: ${tester}         Test ID: ${testId}\n\n`
-        + `Channel: ${channel}\nVoucher Type: ${resolveVoucherType}\n`
-        + (havePrice ? `Token Price: ${tokenPrice}\n` : '')
-        + `Offer Type: ${offerType}\n`
-        + (offerType === 'Discount voucher' ? `Discount value: $${discount}\n` : "")
-        + `Offer period: ${startDate} to ${endDate}\n`
-        + `Quota: ${unlimitQuota ? 'Unlimited' : quota}\n`
-        + "\nEligibility:\n"
-        + (!minspendOn && !weekdayOn && !timeOn ? 'None\n' :
-            ([
-                minspendOn ? `Minimum Spend: ${minspend}\n` : '',
-                weekdayOn ? `Weekdays: ${weekdays.length ? weekdays.join(', ') : "None"}\n` : '',
-                timeOn ? `Time of day: ${startTime} - ${endTime}\n` : ''
-            ].join('')))
+    const tc_title = "[中文] " + title
 
-    const tc_title = "[CN] " + title
-    const tc_description = "[CN]\n" + description
+
+
+    const descriptionPair = createDiscriptions()
+    const description = descriptionPair.en
+    const tc_description = descriptionPair.tc
 
     const tabe_data: DATA_TABLE = {
-        title, tc_title, 
+        title, tc_title,
         // description, tc_description,
         start_date: dateStringFormat(startDate),
         end_date: dateStringFormat(endDate),
@@ -79,38 +98,38 @@ function useVoucherData() {
         end_time: timeOn ? endTime : "23:59",
         min_spend_on: minspendOn,
         min_spend: minspendOn ? minspend : null,
-        weekday_on:weekdayOn,
-        mon_on:weekdays.includes('Monday'),
-        tue_on:weekdays.includes('Tuesday'),
-        wed_on:weekdays.includes('Wednesday'),
-        thur_on:weekdays.includes('Thursday'),
-        fri_on:weekdays.includes('Wednesday'),
-        sat_on:weekdays.includes('Saturday'),
-        sun_on:weekdays.includes('Sunday'),
+        weekday_on: weekdayOn,
+        mon_on: weekdays.includes('Monday'),
+        tue_on: weekdays.includes('Tuesday'),
+        wed_on: weekdays.includes('Wednesday'),
+        thur_on: weekdays.includes('Thursday'),
+        fri_on: weekdays.includes('Wednesday'),
+        sat_on: weekdays.includes('Saturday'),
+        sun_on: weekdays.includes('Sunday'),
         discount_value: offerType === 'Discount voucher' ? discount : null,
-        token_price:tokenPrice
+        token_price: tokenPrice
     }
 
-    function tableValue(head:DATA_HEADING){
+    function tableValue(head: DATA_HEADING) {
         const value = tabe_data[head]
-        if( typeof value === 'boolean') return value?1:0
+        if (typeof value === 'boolean') return value ? 1 : 0
         return value
-      }
+    }
 
     const createVoucherData = async () => {
-        const header = DATA_HEADINGS.map(h=>h).join('\t')
-        const value =  DATA_HEADINGS.map(h=>tableValue(h)).join('\t')
+        const header = DATA_HEADINGS.map(h => h).join('\t')
+        const value = DATA_HEADINGS.map(h => tableValue(h)).join('\t')
         const table = {
-            'label':'Table except descriptions',
-            'value':[header,value].join('\n')
+            'label': 'Table except descriptions',
+            'value': [header, value].join('\n')
         }
 
         const to_copy = [
             {
-                label:'English description',value:description
+                label: 'English description', value: description
             },
             {
-                label:'Chinese description',value:tc_description
+                label: 'Chinese description', value: tc_description
             },
             table,
         ] satisfies {
@@ -119,21 +138,21 @@ function useVoucherData() {
         }[]
         let idx = 0
         const wait = 500
-        const fn = async ()=>{
-            if(idx === to_copy.length){
+        const fn = async () => {
+            if (idx === to_copy.length) {
                 return
             }
-            const {label,value} = to_copy[idx]
+            const { label, value } = to_copy[idx]
             await navigator.clipboard.writeText(value)
             toast({
                 title: `Copied ${label} to clipboard`,
             })
             idx++
-            window.setTimeout(()=>fn(),wait)
+            window.setTimeout(() => fn(), wait)
         }
-        window.setTimeout(()=>fn(),wait)
-        
-       
+        window.setTimeout(() => fn(), wait)
+
+
     }
 
 
@@ -156,6 +175,7 @@ function useVoucherData() {
         weekdays,
         startTime,
         endTime,
+        haveEligibility,
         havePrice,
         isForceLimitedQuota,
         isForceUnlimitQuota,
