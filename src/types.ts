@@ -30,8 +30,8 @@ export type Weekday = typeof Weekdays[number]
 export const DATA_HEADINGS = [
     'title',
     'tc_title',
-    "description",
-    "tc_description",
+    // "description",
+    // "tc_description",
     'start_date',
     "end_date",
     'min_spend_on',
@@ -50,8 +50,8 @@ export type DATA_HEADING = typeof DATA_HEADINGS[number]
 export type  DATA_TABLE = {
     'title':string,
     'tc_title':string,
-    "description":string,
-    "tc_description":string,
+    // "description":string,
+    // "tc_description":string,
     'start_date':string,
     "end_date":string,
     'min_spend_on':boolean,

@@ -1,4 +1,4 @@
-import { Weekday } from "@/types"
+import {Weekday } from "@/types"
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -18,4 +18,5 @@ export function weekdayShort(weekday:Weekday){
     case 'Saturday': return 'sat'
   }
 }
+
 

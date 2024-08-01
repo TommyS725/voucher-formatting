@@ -1,13 +1,13 @@
 import { useMemo } from "react";
-import { Channel, ChannelToSymbol, DATA_HEADINGS, DATA_TABLE, OfferType, OfferTypeToSymbol, VoucherType, Weekday } from "../types";
+import { Channel, ChannelToSymbol, DATA_HEADING, DATA_HEADINGS, DATA_TABLE, OfferType, OfferTypeToSymbol, VoucherType, Weekday } from "../types";
 import useLocalStorage from "./useLocalStorage";
-import { weekdayShort } from "@/lib/utils";
+import {  weekdayShort } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 
 
 function useVoucherData() {
     const year = useMemo(() => new Date().getFullYear(), [])
-    const {toast} = useToast()
+    const { toast } = useToast()
     const [tester, setTester] = useLocalStorage<string>('tester',)
     const [testId, setTestId] = useLocalStorage<number>('testId', 1)
     const [channel, setChannel] = useLocalStorage<Channel>('channel', 'Brand voucher')
@@ -46,7 +46,7 @@ function useVoucherData() {
     const title = `${tester}${testId}_${ChannelToSymbol[channel]}_${OfferTypeToSymbol[offerType]}`
         + `_m${minspendOn ? minspend : "0"}_${weekdayTitle}`
         + `_${timeOn ? startTime + "-" + endTime : "00:00-23:59"}`
-        + `_${isUnlimitQuota? "Un" : "q" + quota}`
+        + `_${isUnlimitQuota ? "Un" : "q" + quota}`
 
 
     const description = `Tester: ${tester}         Test ID: ${testId}\n\n`
@@ -60,47 +60,70 @@ function useVoucherData() {
         + (!minspendOn && !weekdayOn && !timeOn ? 'None\n' :
             ([
                 minspendOn ? `Minimum Spend: ${minspend}\n` : '',
-                weekdayOn ? `Weekdays: ${weekdays.length?weekdays.join(', '):"None"}\n` : '',
+                weekdayOn ? `Weekdays: ${weekdays.length ? weekdays.join(', ') : "None"}\n` : '',
                 timeOn ? `Time of day: ${startTime} - ${endTime}\n` : ''
             ].join('')))
 
     const tc_title = "[CN] " + title
     const tc_description = "[CN]\n" + description
-    
-    const createVoucherData= async ()=>{
-        const table = document.createElement('table')
-        const tabe_data:DATA_TABLE = {
-            title,tc_title,description,tc_description,
-            start_date:startDate,
-            end_date:endDate,
-            quota:isUnlimitQuota?null:quota,
-            is_unlimited_quota:isUnlimitQuota,
-            time_on:timeOn,
-            start_time:timeOn?startTime:"00::00",
-            end_time:timeOn?endTime:"23:59",
-            min_spend_on:minspendOn,
-            min_spend:minspendOn?minspend:null,
-            discount_value:offerType==='Discount voucher'?discount:null
-        }
-        const headerRow  = document.createElement('tr')
-        const valueRow = document.createElement('tr')
-        for(const heading of DATA_HEADINGS){
-            const header = document.createElement('th')
-            const value = document.createElement('td')
-            header.innerText=heading
-            value.innerText = String(tabe_data[heading])
-            headerRow.appendChild(header)
-            valueRow.appendChild(value)
+
+    const tabe_data: DATA_TABLE = {
+        title, tc_title, 
+        // description, tc_description,
+        start_date: startDate,
+        end_date: endDate,
+        quota: isUnlimitQuota ? null : quota,
+        is_unlimited_quota: isUnlimitQuota,
+        time_on: timeOn,
+        start_time: timeOn ? startTime : "00::00",
+        end_time: timeOn ? endTime : "23:59",
+        min_spend_on: minspendOn,
+        min_spend: minspendOn ? minspend : null,
+        discount_value: offerType === 'Discount voucher' ? discount : null
+    }
+
+    function tableValue(head:DATA_HEADING){
+        const value = tabe_data[head]
+        if( typeof value === 'boolean') return value?"TRUE":"FALSE"
+        return value
+      }
+
+    const createVoucherData = async () => {
+        const header = DATA_HEADINGS.map(h=>h).join('\t')
+        const value =  DATA_HEADINGS.map(h=>tableValue(h)).join('\t')
+        const table = {
+            'label':'Table except descriptions',
+            'value':[header,value].join('\n')
         }
 
-        table.appendChild(headerRow)
-        table.appendChild(valueRow)
-
-        await navigator.clipboard.writeText(table.outerHTML)
-        setTestId(testId+1)
-        toast({
-            title: `Copied voucher data to clipboard in table format`,
-        })
+        const to_copy = [table,
+            {
+                label:'English description',value:description
+            },
+            {
+                label:'Chinese description',value:tc_description
+            },
+        ] satisfies {
+            label: string
+            value: string
+        }[]
+        let idx = 0
+        const wait = 500
+        const fn = async ()=>{
+            if(idx === to_copy.length){
+                return
+            }
+            const {label,value} = to_copy[idx]
+            await navigator.clipboard.writeText(value)
+            toast({
+                title: `Copied ${label} to clipboard`,
+            })
+            idx++
+            window.setTimeout(()=>fn(),wait)
+        }
+        window.setTimeout(()=>fn(),wait)
+        
+       
     }
 
 
@@ -132,7 +155,8 @@ function useVoucherData() {
         title,
         description,
         tc_title,
-        tc_description
+        tc_description,
+        tabe_data
     }
 
     const action = {
@@ -157,7 +181,7 @@ function useVoucherData() {
         createVoucherData
     }
 
-    return [data,action] as const
+    return [data, action] as const
 }
 
 export default useVoucherData
