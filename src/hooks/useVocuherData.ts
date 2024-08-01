@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Channel, ChannelToSymbol, DATA_HEADING, DATA_HEADINGS, DATA_TABLE, OfferType, OfferTypeToSymbol, VoucherType, Weekday } from "../types";
 import useLocalStorage from "./useLocalStorage";
-import {  weekdayShort } from "@/lib/utils";
+import {  dateStringFormat, weekdayShort } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 
 
@@ -70,8 +70,8 @@ function useVoucherData() {
     const tabe_data: DATA_TABLE = {
         title, tc_title, 
         // description, tc_description,
-        start_date: startDate,
-        end_date: endDate,
+        start_date: dateStringFormat(startDate),
+        end_date: dateStringFormat(endDate),
         quota: isUnlimitQuota ? null : quota,
         is_unlimited_quota: isUnlimitQuota,
         time_on: timeOn,
@@ -79,12 +79,21 @@ function useVoucherData() {
         end_time: timeOn ? endTime : "23:59",
         min_spend_on: minspendOn,
         min_spend: minspendOn ? minspend : null,
-        discount_value: offerType === 'Discount voucher' ? discount : null
+        weekday_on:weekdayOn,
+        mon_on:weekdays.includes('Monday'),
+        tue_on:weekdays.includes('Tuesday'),
+        wed_on:weekdays.includes('Wednesday'),
+        thur_on:weekdays.includes('Thursday'),
+        fri_on:weekdays.includes('Wednesday'),
+        sat_on:weekdays.includes('Saturday'),
+        sun_on:weekdays.includes('Sunday'),
+        discount_value: offerType === 'Discount voucher' ? discount : null,
+        token_price:tokenPrice
     }
 
     function tableValue(head:DATA_HEADING){
         const value = tabe_data[head]
-        if( typeof value === 'boolean') return value?"TRUE":"FALSE"
+        if( typeof value === 'boolean') return value?1:0
         return value
       }
 
@@ -186,3 +195,5 @@ function useVoucherData() {
 }
 
 export default useVoucherData
+
+

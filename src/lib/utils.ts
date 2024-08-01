@@ -20,3 +20,10 @@ export function weekdayShort(weekday:Weekday){
 }
 
 
+export function dateStringFormat(s:string):string{
+  const vals = s.split('-')
+  vals.reverse()
+  return vals.join('/')
+}
+
+

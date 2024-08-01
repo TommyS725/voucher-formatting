@@ -39,9 +39,18 @@ export const DATA_HEADINGS = [
     'time_on',
     'start_time',
     'end_time',
+    'weekday_on',
+    'mon_on',
+    'tue_on',
+    'wed_on',
+    'thur_on',
+    'fri_on',
+    'sat_on',
+    'sun_on',
     'discount_value',
     'quota',
-    'is_unlimited_quota'
+    'is_unlimited_quota',
+    'token_price',
 ] as const 
 
 
@@ -59,7 +68,16 @@ export type  DATA_TABLE = {
     'time_on':boolean,
     'start_time':string,
     'end_time':string,
+    'weekday_on':boolean
+    'mon_on':boolean,
+    'tue_on':boolean,
+    'wed_on':boolean,
+    'thur_on':boolean
+    'fri_on':boolean,
+    'sat_on':boolean,
+    'sun_on':boolean,
     'discount_value':number|null,
     'quota':number|null,
-    'is_unlimited_quota':boolean
+    'is_unlimited_quota':boolean,
+    'token_price':number
 }
