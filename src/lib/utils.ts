@@ -26,4 +26,8 @@ export function dateStringFormat(s:string):string{
   return vals.join('/')
 }
 
+export function arrayrify<T>(value:T|T[]):T[]{
+    return Array.isArray(value)?value:[value]
+}
+
 

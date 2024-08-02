@@ -2,13 +2,13 @@ import { useMemo } from "react";
 import { Channel, ChannelToSymbol, DATA_HEADING, DATA_HEADINGS, DATA_TABLE, OfferType, OfferTypeToSymbol, VoucherType, Weekday } from "../types";
 import useLocalStorage from "./useLocalStorage";
 import { dateStringFormat, weekdayShort } from "@/lib/utils";
-import { useToast } from "@/components/ui/use-toast";
 import { channelDict, Dict, Language, offerTypeDict, pair, voucherTypeDict, weekdayDict } from "@/lib/languages";
+import useCopy from "./useCopy";
 
 
 function useVoucherData() {
     const year = useMemo(() => new Date().getFullYear(), [])
-    const { toast } = useToast()
+    const {copy} = useCopy()
     const [tester, setTester] = useLocalStorage<string>('tester',)
     const [testId, setTestId] = useLocalStorage<number>('testId', 1)
     const [channel, setChannel] = useLocalStorage<Channel>('channel', 'Brand voucher')
@@ -119,17 +119,18 @@ function useVoucherData() {
 
     const copyHeaders = async ()=>{
         const header = DATA_HEADINGS.map(h => h).join('\t')
-        await navigator.clipboard.writeText(header)
-        toast({
-            title: `Copied table headers to clipboard`,
+        await copy({
+            label: `Copied table headers to clipboard`,
+            value:header
         })
     }
 
     const createVoucherData = async () => {
         const value = DATA_HEADINGS.map(h => tableValue(h)).join('\t')
         const table = {
-            'label': 'Table value except descriptions',
-            'value': value
+            'label': 'Table Values Except Descriptions',
+            'value': value,
+            description:'Remember to also paste the descriptions and incrment the Test ID'
         }
 
         const to_copy = [
@@ -140,9 +141,10 @@ function useVoucherData() {
                 label: 'Chinese description', value: tc_description
             },
             table,
-        ] satisfies {
+        ] as {
             label: string
             value: string
+            description?:string
         }[]
         let idx = 0
         const wait = 500
@@ -151,10 +153,11 @@ function useVoucherData() {
                 // setTestId(testId+1)
                 return
             }
-            const { label, value } = to_copy[idx]
-            await navigator.clipboard.writeText(value)
-            toast({
-                title: `Copied ${label} to clipboard`,
+            const { label, value,description } = to_copy[idx]
+            await copy({
+                label,
+                value,
+                description
             })
             idx++
             window.setTimeout(() => fn(), wait)
