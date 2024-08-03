@@ -7,7 +7,7 @@ type Text = number | string
 type Props<T extends Text> = {
     label: string
     placeholder: string
-    setter: (value: T) => void
+    setter: (value: T|((prev:T)=>T)) => void
 } & React.InputHTMLAttributes<HTMLInputElement>
 
 

@@ -1,7 +1,3 @@
-
-
-
-
 export const ChannelToSymbol = {
    'Brand voucher':'Br',
    'The Club':'Club',
@@ -19,7 +15,7 @@ export const OfferTypes = Object.keys(OfferTypeToSymbol) as OfferType[]
 export type OfferType = keyof typeof OfferTypeToSymbol
 export type OfferTypeSymbol = typeof OfferTypeToSymbol[OfferType]
 
-export const VoucherTypes =['Token Reemption', 'Free Reemption'] as const
+export const VoucherTypes =['Token Redemption', 'Free Redemption'] as const
 export type VoucherType = typeof VoucherTypes[number]
 
 export const Weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const
@@ -81,3 +77,28 @@ export type  DATA_TABLE = {
     'is_unlimited_quota':boolean,
     'token_price':number
 }
+
+
+export type VoucherJSON = {
+    title: string;
+    tc_title: string;
+    channel: Channel;
+    voucherType: VoucherType;
+    description: string;
+    tc_description: string;
+    startDate: string;
+    endDate: string;
+    minspendOn: boolean;
+    minspend: number | null;
+    timeOn: boolean;
+    startTime: string;
+    endTime: string;
+    weekdayOn: boolean;
+    weekdays: Weekday[];
+    offerType: OfferType;
+    discount: number | null;
+    quota: number | null;
+    isUnlimitQuota: boolean;
+    tokenPrice: number;
+  };
+  

@@ -13,7 +13,7 @@ function App() {
 
   return (
     <>
-      <main className="  m-8 mb-20 space-y-16  ">
+      <main className="  m-8 mb-20 space-y-16    ">
         <div className=" grid grid-cols-2 gap-2">
           <div className=" space-y-16">
             <Tabs defaultValue="required" className="w-[400px]">
@@ -33,8 +33,12 @@ function App() {
               </TabsContent>
             </Tabs>
           </div>
-          <Output data={data} action={action}/>
+          <Output data={data} action={action} />
         </div>
+        {/* json string of extension to copy */}
+        {data.tester && <pre className="bg-gray-100 p-4 rounded-lg hidden" id='v_data'>
+          {JSON.stringify(data.voucherJson)}
+        </pre>}
       </main>
       <Toaster />
     </>

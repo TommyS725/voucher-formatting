@@ -1,4 +1,4 @@
-import {Weekday } from "@/types"
+import {Weekday } from "@/lib/types"
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 

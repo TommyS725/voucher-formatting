@@ -1,4 +1,4 @@
-import { Channels, OfferTypes, VoucherTypes } from "@/types"
+import { Channels, OfferTypes, VoucherTypes } from "@/lib/types"
 import { FC } from "react"
 import TextInput from "./TextInput"
 import SelectInput from "./SelectInput"
@@ -24,11 +24,11 @@ const RequiredFields: FC<Props> = ({ data, update }) => {
    
     return (
         <div className="mt-8  space-y-8">
-            <TextInput label="Tester" placeholder="Tester" setter={update.setTester} defaultValue={data.tester} />
+            <TextInput label="Tester" placeholder="Tester"  setter={update.setTester} defaultValue={data.tester} />
             <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label >Test ID</Label>
                 <div className=" flex space-x-16">
-                    <Input type='number' placeholder={'Test ID'} value={data.testId}
+                    <Input type='number' placeholder={'Test ID'} value={data.testId} 
                         onChange={(e) => update.setTestId(Number(e.target.value))}
                     />
                     <Button onClick={() => update.setTestId(data.testId + 1)}>Increment</Button>

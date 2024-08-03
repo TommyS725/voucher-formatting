@@ -1,4 +1,4 @@
-import { Weekdays } from "@/types"
+import { Weekdays } from "@/lib/types"
 import { Switch } from "./ui/switch"
 import { Input } from "./ui/input"
 import { Checkbox } from "./ui/checkbox"

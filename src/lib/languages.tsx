@@ -1,4 +1,4 @@
-import { Channel, OfferType, VoucherType, Weekday } from "@/types";
+import { Channel, OfferType, VoucherType, Weekday } from "@/lib/types";
 
 
 export type Language = 'en'|'tc'
@@ -35,8 +35,8 @@ export const channelDict = {
 }
 
 export const voucherTypeDict = {
-    'Free Reemption':pair('Free Redemption','免費兌換'),
-    'Token Reemption':pair('Token Redemption','積分兌換')
+    'Free Redemption':pair('Free Redemption','免費兌換'),
+    'Token Redemption':pair('Token Redemption','積分兌換')
 } satisfies {[key in VoucherType]:Pair}
 
 export const offerTypeDict = {

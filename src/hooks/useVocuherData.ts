@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Channel, ChannelToSymbol, DATA_HEADING, DATA_HEADINGS, DATA_TABLE, OfferType, OfferTypeToSymbol, VoucherType, Weekday } from "../types";
+import { Channel, ChannelToSymbol, DATA_HEADING, DATA_HEADINGS, DATA_TABLE, OfferType, OfferTypeToSymbol, VoucherJSON, VoucherType, Weekday } from "../lib/types";
 import useLocalStorage from "./useLocalStorage";
 import { dateStringFormat, weekdayShort } from "@/lib/utils";
 import { channelDict, Dict, Language, offerTypeDict, pair, voucherTypeDict, weekdayDict } from "@/lib/languages";
@@ -15,7 +15,7 @@ function useVoucherData() {
 
     const [offerType, setOfferType] = useLocalStorage<OfferType>('OfferType', 'Free item')
     const [tokenPrice, setTokenPrice] = useLocalStorage<number>('tokenPrice', 10)
-    const [voucherType, setVoucherType] = useLocalStorage<VoucherType>('voucherType', 'Token Reemption')
+    const [voucherType, setVoucherType] = useLocalStorage<VoucherType>('voucherType', 'Token Redemption')
     const [discount, setDiscount] = useLocalStorage<number>('discount', 10)
     const [startDate, setStartDate] = useLocalStorage<string>('startDate', `${year}-01-01`)
     const [endDate, setEndDate] = useLocalStorage<string>('endDate', `${year}-12-31`)
@@ -32,19 +32,21 @@ function useVoucherData() {
     const [startTime, setStartTime] = useLocalStorage<string>('startTime', '00:00')
     const [endTime, setEndTime] = useLocalStorage<string>('endTime', '23:59')
 
-    const havePrice = channel === 'Brand voucher' && voucherType === 'Token Reemption'
+    const havePrice = channel === 'Brand voucher' && voucherType === 'Token Redemption'
     const isForceUnlimitQuota = channel === 'Airdrop'
-    const isForceLimitedQuota = channel === 'Brand voucher' && voucherType === 'Free Reemption'
+    const isForceLimitedQuota = channel === 'Brand voucher' && voucherType === 'Free Redemption'
     const isUnlimitQuota = isForceLimitedQuota ? false : isForceUnlimitQuota ? true : unlimitQuota
-    const resolveVoucherType: VoucherType = channel === 'Airdrop' ? 'Free Reemption' : channel === 'The Club' ? 'Token Reemption' : voucherType
+    const resolveVoucherType: VoucherType = channel === 'Airdrop' ? 'Free Redemption': channel === 'The Club' ? 'Token Redemption' : voucherType
     const haveEligibility = minspendOn || weekdayOn || timeOn
 
     function createDiscriptions(){
         function descriptionForLang(lang:Language){
+           
+           try{
             const sentences = [
                 `${Dict.tester[lang]}: ${tester}        ${Dict['testId'][lang]}: ${testId}`,
                 `${Dict['channel'][lang]}: ${channelDict[channel][lang]}`,
-                `${Dict['voucherType'][lang]}: ${voucherTypeDict[resolveVoucherType][lang]}`,
+                `${Dict['voucherType'][lang]}: ${voucherTypeDict[voucherType][lang]}`,
                 havePrice?`${Dict['tokenPrice'][lang]}: ${tokenPrice}` : '',
                 `${Dict['offerType'][lang]}: ${offerTypeDict[offerType][lang]}`,
                 offerType === 'Discount voucher' ? `${Dict['discount'][lang]}: $${discount}\n` : "",
@@ -58,8 +60,12 @@ function useVoucherData() {
                  }`:"",
                  timeOn?`${Dict['time'][lang]}:  ${startTime} ${Dict['to'][lang]} ${endTime}`:''
             ].filter(s=>s!=='') satisfies string[]
-    
             return sentences.join('\n')
+           } catch(e){
+              
+               return 'Error Occured. Please try clear the local storage'
+           }
+    
         }
         
         return pair(descriptionForLang('en'),descriptionForLang('tc'))
@@ -109,6 +115,30 @@ function useVoucherData() {
         discount_value: offerType === 'Discount voucher' ? discount : null,
         token_price: tokenPrice
     }
+
+
+    const voucherJson = {
+        title,
+        tc_title,
+        channel,
+        voucherType: resolveVoucherType,
+        description,
+        tc_description,
+        startDate:dateStringFormat(startDate),
+        endDate:dateStringFormat(endDate),
+        minspendOn,
+        minspend,
+        timeOn,
+        startTime,
+        endTime,
+        weekdayOn,
+        weekdays,
+        offerType,
+        discount,
+        quota,
+        isUnlimitQuota,
+        tokenPrice:havePrice?tokenPrice:0
+    } satisfies VoucherJSON
 
     function tableValue(head: DATA_HEADING) {
         const value = tabe_data[head]
@@ -163,9 +193,9 @@ function useVoucherData() {
             window.setTimeout(() => fn(), wait)
         }
         window.setTimeout(() => fn(), wait)
-
-
     }
+
+
 
 
     const data = {
@@ -198,7 +228,8 @@ function useVoucherData() {
         description,
         tc_title,
         tc_description,
-        tabe_data
+        tabe_data,
+        voucherJson,
     }
 
     const action = {
