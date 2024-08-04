@@ -80,12 +80,13 @@ export type  DATA_TABLE = {
 
 
 export type VoucherJSON = {
-    title: string;
-    tc_title: string;
+    testId: number;
+    unformated_title: string;
+    unformated_tc_title: string;
     channel: Channel;
     voucherType: VoucherType;
-    description: string;
-    tc_description: string;
+    unformated_description: string;
+    unformated_tc_description: string;
     startDate: string;
     endDate: string;
     minspendOn: boolean;

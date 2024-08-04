@@ -4,9 +4,11 @@ import useLocalStorage from "./useLocalStorage";
 import { dateStringFormat, weekdayShort } from "@/lib/utils";
 import { channelDict, Dict, Language, offerTypeDict, pair, voucherTypeDict, weekdayDict } from "@/lib/languages";
 import useCopy from "./useCopy";
+import { useSettingContext } from "@/contexts/setting-provider";
 
 
 function useVoucherData() {
+    const {autoIncrement} = useSettingContext()
     const year = useMemo(() => new Date().getFullYear(), [])
     const {copy} = useCopy()
     const [tester, setTester] = useLocalStorage<string>('tester',)
@@ -44,7 +46,7 @@ function useVoucherData() {
            
            try{
             const sentences = [
-                `${Dict.tester[lang]}: ${tester}        ${Dict['testId'][lang]}: ${testId}`,
+                `${Dict.tester[lang]}: ${tester}        ${Dict['testId'][lang]}: {testId}`,
                 `${Dict['channel'][lang]}: ${channelDict[channel][lang]}`,
                 `${Dict['voucherType'][lang]}: ${voucherTypeDict[voucherType][lang]}`,
                 havePrice?`${Dict['tokenPrice'][lang]}: ${tokenPrice}` : '',
@@ -78,19 +80,22 @@ function useVoucherData() {
                 weekdays.map(weekdayShort).join('/')
 
 
-    const title = `${tester}${testId}_${ChannelToSymbol[channel]}_${OfferTypeToSymbol[offerType]}`
+    const unformated_title = `${tester}{testId}_${ChannelToSymbol[channel]}_${OfferTypeToSymbol[offerType]}`
         + `_m${minspendOn ? minspend : "0"}_${weekdayTitle}`
         + `_${timeOn ? startTime + "-" + endTime : "00:00-23:59"}`
         + `_${isUnlimitQuota ? "Un" : "q" + quota}`
 
 
-    const tc_title = "[中文] " + title
+    const unformatedt_tc_title = "[中文] " + unformated_title
+
+    const title = unformated_title.replace('{testId}',testId.toString())
+    const tc_title = unformatedt_tc_title.replace('{testId}',testId.toString())
 
 
 
-    const descriptionPair = createDiscriptions()
-    const description = descriptionPair.en
-    const tc_description = descriptionPair.tc
+    const unFormatedDescriptionPair = createDiscriptions()
+    const description = unFormatedDescriptionPair.en.replace('{testId}',testId.toString())
+    const tc_description = unFormatedDescriptionPair.tc.replace('{testId}',testId.toString())
 
     const tabe_data: DATA_TABLE = {
         title, tc_title,
@@ -118,12 +123,13 @@ function useVoucherData() {
 
 
     const voucherJson = {
-        title,
-        tc_title,
+        testId,
+        unformated_title:unformated_title,
+        unformated_tc_title:unformatedt_tc_title,
         channel,
         voucherType: resolveVoucherType,
-        description,
-        tc_description,
+        unformated_description:unFormatedDescriptionPair.en,
+        unformated_tc_description:unFormatedDescriptionPair.tc,
         startDate:dateStringFormat(startDate),
         endDate:dateStringFormat(endDate),
         minspendOn,
@@ -160,7 +166,7 @@ function useVoucherData() {
         const table = {
             'label': 'Table Values Except Descriptions',
             'value': value,
-            description:'Remember to also paste the descriptions and incrment the Test ID'
+            description:`Remember to also paste the descriptions ${!autoIncrement.value? 'and incrment the Test ID':''}`
         }
 
         const to_copy = [
@@ -180,7 +186,7 @@ function useVoucherData() {
         const wait = 500
         const fn = async () => {
             if (idx === to_copy.length) {
-                // setTestId(testId+1)
+                autoIncrement.value  && setTestId(prev=>prev+1)
                 return
             }
             const { label, value,description } = to_copy[idx]

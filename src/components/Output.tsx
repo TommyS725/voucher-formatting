@@ -1,35 +1,28 @@
-import useVoucherData from "@/hooks/useVocuherData"
 import CopyField from "./copy_fields/CopyField"
 import { Button } from "./ui/button"
 import InlineCopyField from "./copy_fields/InlineCopyField"
 import { dateStringFormat } from "@/lib/utils"
+import MenuSheet from "./MenuSheet"
+import { useVoucherDataContext } from "@/contexts/voucher-data-provider"
 
 
 
-type Props = {
-    data: ReturnType<typeof useVoucherData>[0]
-    action: ReturnType<typeof useVoucherData>[1]
-}
 
-
-function Output({ data, action }: Props) {
-
-
+function Output() {
+    const [data,action] = useVoucherDataContext()
 
     return (
         <div className="space-y-10">
-            <div className=" flex flex-wrap gap-8 justify-between">
+            <div className="  flex flex-wrap ">
 
-                <pre className="text-2xl font-semibold">Output</pre>
-                {data.tester &&
-                    <div className=" space-x-10">
+                <p className="text-2xl font-semibold">Output</p>
+                <div className="  flex flex-grow justify-evenly items-center ">
 
-                        <Button onClick={action.createVoucherData}>Copy Voucher Data</Button>
-                        <Button variant={'secondary'} onClick={action.copyHeaders}>Copy Table Headers</Button>
+                    <Button disabled={!data.tester} onClick={action.createVoucherData}>Copy Voucher Data</Button>
+                    <Button disabled={!data.tester} variant={'secondary'} onClick={action.copyHeaders}>Copy Table Headers</Button>
+                    <MenuSheet />
 
-                    </div>
-
-                }
+                </div>
             </div>
             {
                 !data.tester && <h1 className="text-xl font-semibold text-red-500">
@@ -50,11 +43,11 @@ function Output({ data, action }: Props) {
                             deliminitor="To" label={['Start Date', 'End Date']} />
                         {data.havePrice && <InlineCopyField title="Redeem Token" text={data.tokenPrice} />}
                         {data.offerType === 'Discount voucher' && <InlineCopyField title={'Offer Value'} text={data.discount} />}
-                        {!data.isUnlimitQuota && <InlineCopyField title="Quota" text={data.quota}  />}
+                        {!data.isUnlimitQuota && <InlineCopyField title="Quota" text={data.quota} />}
                         {data.minspendOn && <InlineCopyField title="Minimum Spend" text={data.minspend} />}
                         {data.weekdayOn && <InlineCopyField title="Weekdays" text={data.weekdays} label={data.weekdays} />}
-                        {data.timeOn&& <InlineCopyField title="Time of day" deliminitor="To" text={[data.startTime,data.endTime]} label={['Start Date','End Date']} />}
-                        
+                        {data.timeOn && <InlineCopyField title="Time of day" deliminitor="To" text={[data.startTime, data.endTime]} label={['Start Date', 'End Date']} />}
+
 
                     </div>
                 </div>

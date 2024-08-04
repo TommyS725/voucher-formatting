@@ -3,20 +3,13 @@ import { Switch } from "./ui/switch"
 import { Input } from "./ui/input"
 import { Checkbox } from "./ui/checkbox"
 import TextInput from "./TextInput"
-import useVoucherData from "@/hooks/useVocuherData"
+import { useVoucherDataContext } from "@/contexts/voucher-data-provider"
 
 
-type Props = {
-    data: ReturnType<typeof useVoucherData>[0]
-
-    update:  ReturnType<typeof useVoucherData>[1]
 
 
-}
-
-
-function EligibilityFields(props: Props) {
-    const { data, update } = props
+function EligibilityFields() {
+    const [data, update] = useVoucherDataContext()  
 
     return (
         <div className="mt-8 space-y-16">
@@ -73,8 +66,8 @@ function EligibilityFields(props: Props) {
                         Time of day
                     </label>
                 </div>
-               <TextInput label="From" placeholder="Start Time" setter={update.setStartTime} defaultValue={data.startTime} type='time' disabled={!data.timeOn} />
-                <TextInput label="To" placeholder="End Time" setter={update.setEndTime} defaultValue={data.endTime} type='time' disabled={!data.timeOn} />
+               <TextInput className="dark:[color-scheme:dark]" label="From" placeholder="Start Time" setter={update.setStartTime} defaultValue={data.startTime} type='time' disabled={!data.timeOn} />
+                <TextInput className="dark:[color-scheme:dark]" label="To" placeholder="End Time" setter={update.setEndTime} defaultValue={data.endTime} type='time' disabled={!data.timeOn} />
             </div>
         </div>
     )

@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-const config  = {
+module.exports = {
   darkMode: ["class"],
   content: [
     './pages/**/*.{ts,tsx}',
@@ -73,8 +73,5 @@ const config  = {
       },
     },
   },
-  // eslint-disable-next-line no-undef
   plugins: [require("tailwindcss-animate")],
 }
-
-export default config

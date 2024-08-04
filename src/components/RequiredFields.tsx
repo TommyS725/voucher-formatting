@@ -1,26 +1,18 @@
 import { Channels, OfferTypes, VoucherTypes } from "@/lib/types"
-import { FC } from "react"
 import TextInput from "./TextInput"
 import SelectInput from "./SelectInput"
 import SwitchInput from "./SwitchInput"
 import { Button } from "./ui/button"
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
-import useVoucherData from "@/hooks/useVocuherData"
+import { useVoucherDataContext } from "@/contexts/voucher-data-provider"
+import { useSettingContext } from "@/contexts/setting-provider"
 
-
-
-
-type Props = {
-    data: ReturnType<typeof useVoucherData>[0]
-
-    update:  ReturnType<typeof useVoucherData>[1]
-
-
-}
 
 // tester, startDate, endDate, channel, voucherType, offerType,unlimitQuota, quota, dsicount
-const RequiredFields: FC<Props> = ({ data, update }) => {
+const RequiredFields=  () => {
+    const [data, update] = useVoucherDataContext()
+    const {autoIncrement} = useSettingContext()
    
     return (
         <div className="mt-8  space-y-8">
@@ -31,11 +23,11 @@ const RequiredFields: FC<Props> = ({ data, update }) => {
                     <Input type='number' placeholder={'Test ID'} value={data.testId} 
                         onChange={(e) => update.setTestId(Number(e.target.value))}
                     />
-                    <Button onClick={() => update.setTestId(data.testId + 1)}>Increment</Button>
+                    <Button onClick={() => update.setTestId(prev=>prev+1)}>Increment {autoIncrement.value?'(Auto Incrementing)':''}</Button>
                 </div>
             </div>
-            <TextInput label="Start Date" placeholder="Start Date" setter={update.setStartDate} defaultValue={data.startDate} type='date' />
-            <TextInput label="End Date" placeholder="End Date" setter={update.setEndDate} defaultValue={data.endDate} type='date' />
+            <TextInput className="dark:[color-scheme:dark]" label="Start Date" placeholder="Start Date" setter={update.setStartDate} defaultValue={data.startDate} type='date' />
+            <TextInput className="dark:[color-scheme:dark]" label="End Date" placeholder="End Date" setter={update.setEndDate} defaultValue={data.endDate} type='date' />
             <SelectInput label="Channel" options={Channels} value={data.channel} setter={update.setChannel} />
             <SelectInput label="Voucher Type" options={[...VoucherTypes]} value={data.resolveVoucherType}
             disabled={data.channel!=='Brand voucher'} setter={update.setVoucherType} />
