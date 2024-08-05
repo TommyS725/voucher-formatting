@@ -37,7 +37,7 @@ const RequiredFields=  () => {
 
             {
                 !data.isForceUnlimitQuota && <TextInput label="Quota" placeholder="Quota" setter={update.setQuota}
-                    min='1' disabled={data.unlimitQuota || data.channel === 'Airdrop'}
+                    min='1' disabled={data.isUnlimitQuota}
                     defaultValue={data.quota} type='number' />
             }
             {
