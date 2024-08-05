@@ -7,39 +7,13 @@ import { Label } from "./ui/label"
 import { Input } from "./ui/input"
 import { useVoucherDataContext } from "@/contexts/voucher-data-provider"
 import { useSettingContext } from "@/contexts/setting-provider"
-import { useEffect } from "react"
-import { useToast } from "./ui/use-toast"
 
 
 // tester, startDate, endDate, channel, voucherType, offerType,unlimitQuota, quota, dsicount
 const RequiredFields = () => {
     const [data, update] = useVoucherDataContext()
     const { autoIncrement } = useSettingContext()
-    const { toast } = useToast()
-
-    useEffect(() => {
-        const action = (ev: MessageEvent<any>) => {
-            if (ev.data.name === 'copied' ) {
-                const title = "Voucher Data Copied To Autofill"
-                if (ev.data.inc === true && localStorage.getItem('autoIncrement') === 'true') {
-                    update.setTestId(prev => {
-                        const id = prev + 1
-                        toast({
-                            title,
-                            description: `Test ID Auto Incremneted From ${prev} to ${id}`
-                        })
-                        return id
-                    })
-                } else {
-                    toast({
-                        title,
-                    })
-                }
-            }
-        }
-        window.addEventListener('message', action)
-        return () => window.removeEventListener('message', action)
-    }, [])
+    
 
     return (
         <div className="mt-8  space-y-8">
