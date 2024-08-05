@@ -14,13 +14,13 @@ type SettingProviderProps = {
     }
 }
 
-type SettingentrySatate<T> = {
+type SettingEntrySatate<T> = {
     value:T
     setValue:(value:T)=>void
 }
 
 type SettingProviderState = {
-    autoIncrement: SettingentrySatate<boolean>
+    autoIncrement: SettingEntrySatate<boolean>
 }
 
 const initialState = {
