@@ -36,7 +36,7 @@ function useVoucherData() {
 
     const havePrice = channel === 'Brand voucher' && voucherType === 'Token Redemption'
     const isForceUnlimitQuota = channel === 'Airdrop'
-    const isForceLimitedQuota = channel === 'Brand voucher' && voucherType === 'Free Redemption'
+    const isForceLimitedQuota = channel !== 'Airdrop' && voucherType === 'Free Redemption'
     const isUnlimitQuota = isForceLimitedQuota ? false : isForceUnlimitQuota ? true : unlimitQuota
     const resolveVoucherType: VoucherType = channel === 'Airdrop' ? 'Free Redemption': channel === 'The Club' ? 'Token Redemption' : voucherType
     const haveEligibility = minspendOn || weekdayOn || timeOn
@@ -51,7 +51,7 @@ function useVoucherData() {
                 `${Dict['voucherType'][lang]}: ${voucherTypeDict[voucherType][lang]}`,
                 havePrice?`${Dict['tokenPrice'][lang]}: ${tokenPrice}` : '',
                 `${Dict['offerType'][lang]}: ${offerTypeDict[offerType][lang]}`,
-                offerType === 'Discount voucher' ? `${Dict['discount'][lang]}: $${discount}\n` : "",
+                offerType === 'Discount voucher' ? `${Dict['discount'][lang]}: $${discount}` : "",
                 `${Dict['offerPeriod'][lang]}: ${dateStringFormat(startDate)} ${Dict['to'][lang]} ${dateStringFormat(endDate)}`,
                 `${Dict['Quota'][lang]}: ${isUnlimitQuota?Dict['unlimited'][lang]:quota}`,
                 `\n${Dict['eligibility'][lang]}: ${haveEligibility?"":Dict['none'][lang]}`,

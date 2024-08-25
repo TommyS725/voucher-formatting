@@ -72,3 +72,4 @@ export const weekdayDict = {
     //             weekdayOn ? `Weekdays: ${weekdays.length ? weekdays.join(', ') : "None"}\n` : '',
     //             timeOn ? `Time of day: ${startTime} - ${endTime}\n` : ''
     //         ].join('')))
+
