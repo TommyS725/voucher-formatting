@@ -43,7 +43,7 @@
     "typescript": "^5.2.2",
     "vite": "^5.3.4"
   },
-  "overrides": {
-    "rollup": "npm:@rollup/wasm-node"
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.6.1"
   }
 }
